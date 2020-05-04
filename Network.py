@@ -1,4 +1,5 @@
 class Edge:
+
     def __init__(self, start, end, capacity=0):
         # an edge has a starting vertex
         self.startVertex = start
@@ -8,8 +9,6 @@ class Edge:
         self.capacity = capacity
         # the current forward flow value
         self.forwardFlow = 0
-        # the current backward flow value (for the residual graph)
-        self.backwardFlow = 0
         # capacity - forward flow indicates how much capacity the edge currently has
         self.currentCapacity = self.capacity - self.forwardFlow
 
@@ -20,6 +19,13 @@ class Edge:
     def __repr__(self):
         return '{} {} {}'.format(self.startVertex, self.endVertex, self.currentCapacity)
 
+    # get the backward edge of this edge
+    def getResidual(self):
+        return Edge(self.endVertex, self.startVertex)
+
+    def addFlow(self, value):
+        self.forwardFlow += value
+        self.currentCapacity = self.capacity - self.forwardFlow
 
 class Network:
     def __init__(self):
@@ -63,25 +69,14 @@ class Network:
         for edge in self.edges:
             if targetEdge == edge:
                 return edge
-        raise RuntimeError("Requested edge does not exist!")
+        raise RuntimeError("Requested edge {} does not exist!".format(targetEdge))
 
     # get flow across network
     def getFlow(self):
         return sum(edge.forwardFlow for edge in self.edges)
 
-    def addFlow(self, edge, value):
-        for e in self.edges:
-            if e == edge:
-                e.forwardFlow += value
-                e.backwardFlow -= value
-                e.currentCapacity = e.capacity - e.forwardFlow
-                return
-        raise RuntimeError("Requested Edge does not exist!")
-
-    def reduceFlow(self, edge, value):
-        for e in self.edges:
-            if e == edge:
-                edge.forwardFlow -= value
-                edge.backwardFlow += value
-                return
-        raise RuntimeError("Requested Edge does not exist!")
+    def addFlow(self, targetEdge, value):
+        forwardEdge = self.getEdge(targetEdge.startVertex, targetEdge.endVertex)
+        backwardEdge = self.getEdge(targetEdge.endVertex, targetEdge.startVertex)
+        forwardEdge.addFlow(value)
+        backwardEdge.addFlow(-value)

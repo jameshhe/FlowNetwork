@@ -4,7 +4,7 @@ from EdmondsCarp import EdmondsCarp
 
 if __name__ == '__main__':
     network = Network()
-    network.loadGraph('Example2.txt')
+    network.loadGraph('Example4.txt')
     # trivial = Trivial(network, 0, 5)
     # trivial.getMaxFlow()
 

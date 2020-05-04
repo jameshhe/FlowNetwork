@@ -27,6 +27,7 @@ class Edge:
         self.forwardFlow += value
         self.currentCapacity = self.capacity - self.forwardFlow
 
+
 class Network:
     def __init__(self):
         # dictionary of vertices and their adjacent vertices

@@ -3,14 +3,13 @@ from Network import Vertex
 
 # Edmonds-Carp implementation of the max flow problem
 class EdmondsCarp:
-    def __init__(self, network, source, sink):
+    def __init__(self, network):
         self.network = network
-        self.source = self.network.getVertex(source)
-        self.sink = self.network.getVertex(sink)
+        self.source = self.network.source
+        self.sink = self.network.sink
         # raise an exception if either the source or the sink is not in the network
         if (self.source not in self.network.vertices.keys()) or (self.sink not in self.network.vertices.keys()):
             raise RuntimeError("Requested source or sink do not exist!")
-        self.network.initializeResidualGraph()
 
     # use Breadth first search to find the bottle neck of the current shortest path
     def BFS(self):

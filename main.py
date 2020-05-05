@@ -4,17 +4,21 @@ from EdmondsCarp import EdmondsCarp
 from PushRelabel import PushRelabel
 
 if __name__ == '__main__':
-    network = Network()
-    network.loadGraph('Example4.txt')
-    trivial = Trivial(network, 0, 5)
-    print(trivial.getMaxFlow())
+    network = Network('Example4.txt', 0, 5)
+    # Trivial
+    trivial = Trivial(network)
+    print("Max Flow:", trivial.getMaxFlow())
     network.reset()
     print('------------------------------------')
-    ec = EdmondsCarp(network, 0, 5)
-    print(ec.getMaxFlow())
+    network.initializeResidualGraph()
+    # Edmonds-Carp
+    ec = EdmondsCarp(network)
+    print("Max Flow:", ec.getMaxFlow())
     network.reset()
     print('------------------------------------')
-    # prl = PushRelabel(network, 0, 5)
+    # push relabel
+    prl = PushRelabel(network)
+    print("Max Flow:", prl.getMaxFlow())
 
 
 

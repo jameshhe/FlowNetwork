@@ -3,10 +3,10 @@ from Network import Vertex
 
 # Trivial solution
 class Trivial:
-    def __init__(self, network, source, sink):
+    def __init__(self, network):
         self.network = network
-        self.source = self.network.getVertex(source)
-        self.sink = self.network.getVertex(sink)
+        self.source = self.network.source
+        self.sink = self.network.sink
 
     def getMaxFlow(self, currMaxFlow=0):
         # DFS returns a path of edges

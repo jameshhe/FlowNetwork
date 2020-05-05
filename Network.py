@@ -36,7 +36,7 @@ class Edge:
         return self.startVertex == other.startVertex and self.endVertex == other.endVertex
 
     def __repr__(self):
-        return '{} {} {}'.format(self.startVertex, self.endVertex, self.currentCapacity)
+        return '{} {}'.format(self.startVertex, self.endVertex)
 
     # get the backward edge of this edge
     def getResidual(self):
@@ -52,12 +52,14 @@ class Edge:
 
 
 class Network:
-    def __init__(self):
+    def __init__(self, file, source, sink):
         # dictionary of vertices and their adjacent vertices
         self.vertices = {}
         # list of edges
         self.edges = []
-        self.maxFlow = 0
+        self.loadGraph(file)
+        self.source = self.getVertex(source)
+        self.sink = self.getVertex(sink)
 
     # add a vertex and set its neighbors to an empty list
     def addVertex(self, v):
@@ -66,6 +68,8 @@ class Network:
 
     # add an edge
     def addEdge(self, start, end, capacity):
+        start = self.getVertex(start)
+        end = self.getVertex(end)
         edge = Edge(start, end, capacity)
         self.edges.append(edge)
         # append end to start's neighbor
@@ -75,10 +79,8 @@ class Network:
     def loadGraph(self, file):
         for row in open(file, 'r'):
             start, end, capacity = map(int, row.split())
-            start = Vertex(start)
-            end = Vertex(end)
-            self.addVertex(start)
-            self.addVertex(end)
+            self.addVertex(Vertex(start))
+            self.addVertex(Vertex(end))
             self.addEdge(start, end, capacity)
 
     # get all the vertices

@@ -1,20 +1,16 @@
+from Network import Vertex
+
+
 # Edmonds-Carp implementation of the max flow problem
 class EdmondsCarp:
     def __init__(self, network, source, sink):
         self.network = network
-        self.source = source
-        self.sink = sink
+        self.source = self.network.getVertex(source)
+        self.sink = self.network.getVertex(sink)
         # raise an exception if either the source or the sink is not in the network
         if (self.source not in self.network.vertices.keys()) or (self.sink not in self.network.vertices.keys()):
             raise RuntimeError("Requested source or sink do not exist!")
-        self.initializeResidualGraph()
-
-    def initializeResidualGraph(self):
-        residuals = [edge.getResidual() for edge in self.network.edges]
-        self.network.edges += residuals
-        # add the newly connected edges to the vertices dictionary
-        for edge in residuals:
-            self.network.vertices[edge.startVertex] += [edge.endVertex]
+        self.network.initializeResidualGraph()
 
     # use Breadth first search to find the bottle neck of the current shortest path
     def BFS(self):
@@ -50,14 +46,14 @@ class EdmondsCarp:
         # if there's no flow available, return 0
         return 0, []
 
-    def getMaxFlow(self):
+    def getMaxFlow(self, currMaxFlow=0):
         # if 0 is returned, return
         bottleNeck, path = self.BFS()
         if bottleNeck == 0:
-            return
+            return currMaxFlow
         # otherwise, add the current flow to the max flow
-        self.network.maxFlow += bottleNeck
+        currMaxFlow += bottleNeck
         print(path, bottleNeck)
         for edge in path:
-            self.network.addFlow(edge, bottleNeck)
-        self.getMaxFlow()
+            self.network.addFlow(edge, bottleNeck, True)
+        return self.getMaxFlow(currMaxFlow)

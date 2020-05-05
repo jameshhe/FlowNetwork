@@ -1,28 +1,28 @@
-from Network import Network
+from Network import Vertex
 
 
 # Trivial solution
 class Trivial:
     def __init__(self, network, source, sink):
         self.network = network
-        self.source = source
-        self.sink = sink
+        self.source = self.network.getVertex(source)
+        self.sink = self.network.getVertex(sink)
 
-    def getMaxFlow(self):
+    def getMaxFlow(self, currMaxFlow=0):
         # DFS returns a path of edges
         path = self.DFS(self.source, self.sink)
         # return from the recursive function if the only edge in the path is the source
         if len(path) <= 1:
-            return
+            return currMaxFlow
         # find bottle neck of the path
         # get the minimum of the edges based on the capacity to find the minimum capacity of the path (bottle neck)
         bottleNeck = min(path, key=lambda currEdge: currEdge.currentCapacity).currentCapacity
-        self.network.maxFlow += bottleNeck
-        # print(path, bottleNeck)
+        currMaxFlow += bottleNeck
+        print(path, bottleNeck)
         # add flow for the current edges
         for edge in path:
             self.network.addFlow(edge, bottleNeck)
-        self.getMaxFlow()
+        return self.getMaxFlow(currMaxFlow)
 
     def DFS(self, source, sink):
         # make all the vertices false as far as visited

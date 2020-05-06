@@ -18,7 +18,7 @@ class Trivial:
         # get the minimum of the edges based on the capacity to find the minimum capacity of the path (bottle neck)
         bottleNeck = min(path, key=lambda currEdge: currEdge.currentCapacity).currentCapacity
         currMaxFlow += bottleNeck
-        print(path, bottleNeck)
+        # print(path, bottleNeck)
         # add flow for the current edges
         for edge in path:
             self.network.addFlow(edge, bottleNeck)

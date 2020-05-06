@@ -21,30 +21,39 @@ class PushRelabel:
 
     # push excess flow from a vertex
     def push(self, vertex):
-        # traverse through all the neighbors to find one with smaller height
-        for neighbor in self.network.vertices[vertex]:
-            currEdge = self.network.getEdge(vertex, neighbor)
-            # if the flow is equal to the capacity on that edge, then no push is possible
-            # push is only possible if the neighbor's height is less than the vertex's height
-            if currEdge.forwardFlow != currEdge.capacity and vertex.height > neighbor.height:
-                # the flow to be pushed is the minimum of the excess and the capacity of the edge
-                flow = min(vertex.excess, currEdge.currentCapacity)
-                # reduce excess flow
-                vertex.excess -= flow
-                # add flow for the neighbor
-                neighbor.excess += flow
-                self.network.addFlow(currEdge, flow, True)
-                print("Pushed flow {} from vertex {} to vertex {}".format(flow, vertex, neighbor))
-                # if there's one neighbor that we can push to, return true
-                return True
-        return False  # no push is possible
+        # find the neighbor with the greatest height among the neighbors where a push is possible
+        available = [neighbor for neighbor in self.network.vertices[vertex]
+                     if self.network.getEdge(vertex, neighbor).forwardFlow !=
+                     self.network.getEdge(vertex, neighbor).capacity
+                     and vertex.height > neighbor.height]
+        if available:
+            target = max(available, key=lambda x : x.height)
+            targetEdge = self.network.getEdge(vertex, target)
+            # the flow to be pushed is the minimum of the excess and the capacity of the edge
+            flow = min(vertex.excess, targetEdge.currentCapacity)
+            # reduce excess flow
+            vertex.excess -= flow
+            # add flow for the neighbor
+            target.excess += flow
+            self.network.addFlow(targetEdge, flow, True)
+            # print("Pushed flow {} from vertex {} to vertex {}".format(flow, vertex, neighbor))
+            # if there's one neighbor that we can push to, return true
+            return True
+        else:
+            # no push is possible if there's no available vertices to push to
+            return False
 
     def relabel(self, vertex):
         # relabel the vertex if it has excess flow but has smaller height than its neighbor
         # find the minimum of the neighbors height
         # the edge between the vertex and the neighbor also has to have more than 0 current capacity
-        neighbors = [neighbor.height for neighbor in self.network.vertices[vertex] if self.network.getEdge(vertex, neighbor).currentCapacity > 0]
-        minHeight = min(neighbors)
+        neighbors = [neighbor for neighbor in self.network.vertices[vertex] if
+                     self.network.getEdge(vertex, neighbor).currentCapacity > 0]
+        # if the only place to push flow is the source, then don't go through the entire process to do so
+        if len(neighbors) == 1 and neighbors[0] == self.source:
+            vertex.excess = 0
+            return
+        minHeight = min([neighbor.height for neighbor in neighbors])
         # relabel the vertex's height to be one more than the min height
         vertex.height = minHeight + 1
 

@@ -52,7 +52,6 @@ class EdmondsCarp:
             return currMaxFlow
         # otherwise, add the current flow to the max flow
         currMaxFlow += bottleNeck
-        print(path, bottleNeck)
         for edge in path:
             self.network.addFlow(edge, bottleNeck, True)
         return self.getMaxFlow(currMaxFlow)
